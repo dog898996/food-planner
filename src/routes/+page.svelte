@@ -2,7 +2,7 @@
     import SearchBlock from "$lib/svelte/SearchBlock.svelte";
 </script>
 
-<div class="ScrollableListDialog w-[450px] mx-auto shrink-0 mt-6">
+<div class="ScrollableListDialog w-[450px] sm-[350px] mx-auto shrink-0 mt-6">
     <div class="TextContent">
         <div class="Headline">최근 검색 기록</div>
         <div class="SupportingText">
