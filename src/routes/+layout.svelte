@@ -11,7 +11,7 @@
         <a href="/" on:click={() => (isSide = false)}>
             <span class="mb-title">Food Planner</span>
         </a>
-        <a href="/profile" on:click={() => (isSide = false)}>
+        <a href="/profile" class="profile" on:click={() => (isSide = false)}>
             <img
                 src="/account_circle_filled_24px@2x.png"
                 alt=""
@@ -30,14 +30,7 @@
                 }}
                 class="sidebar"
             >
-                <div class="sidebar">
-                    <div
-                        style="
-                    text-align: center;
-                    font-weight: bolder;"
-                    >
-                        사이드바 메뉴
-                    </div>
+                <div class="sidebar overflow-hidden">
                     <a href="/profile" on:click={() => (isSide = false)}>
                         <div class="flex-1 justify-center sidebar-button">
                             <div
@@ -59,7 +52,7 @@
                                 </svg>
 
                                 <div
-                                    class="font-extrabold Label grow shrink basis-0 text-zinc-700 text-[14px] font-medium leading-tight"
+                                    class="font-extrabold Label grow shrink basis-0 text-zinc-700 text-[14px] leading-tight"
                                 >
                                     프로필
                                 </div>
@@ -73,14 +66,14 @@
                             >
                                 <Alarm />
                                 <div
-                                    class="font-extrabold Label grow shrink basis-0 text-zinc-700 text-[14px] font-medium leading-tight"
+                                    class="font-extrabold Label grow shrink basis-0 text-zinc-700 text-[14px] leading-tight"
                                 >
                                     알림 설정
                                 </div>
                             </div>
                         </div>
                     </a>
-                    <a href="/food-scan" on:click={() => (isSide = false)}>
+                    <a href="/food-search" on:click={() => (isSide = false)}>
                         <div class="flex-1 justify-center sidebar-button">
                             <div
                                 class="StateLayer w-56 h-14 pl-4 pr-6 py-4 justify-start items-center gap-3 inline-flex"
@@ -101,7 +94,7 @@
                                 </svg>
 
                                 <div
-                                    class="font-extrabold Label grow shrink basis-0 text-zinc-700 text-[14px] font-medium leading-tight"
+                                    class="font-extrabold Label grow shrink basis-0 text-zinc-700 text-[14px] leading-tight"
                                 >
                                     음식 스캔하기
                                 </div>
@@ -129,7 +122,7 @@
                                 </svg>
 
                                 <div
-                                    class="font-extrabold Label grow shrink basis-0 text-zinc-700 text-[14px] font-medium leading-tight"
+                                    class="font-extrabold Label grow shrink basis-0 text-zinc-700 text-[14px] leading-tight"
                                 >
                                     도움말
                                 </div>
@@ -157,7 +150,7 @@
                                 </svg>
 
                                 <div
-                                    class="font-extrabold Label grow shrink basis-0 text-zinc-700 text-[14px] font-medium leading-tight"
+                                    class="font-extrabold Label grow shrink basis-0 text-zinc-700 text-[14px] leading-tight"
                                 >
                                     홈 화면으로
                                 </div>
@@ -225,17 +218,13 @@
     main {
         position: relative;
     }
-    .sidebar-content {
-        display: flex;
-        padding: 16px 24px 16px 16px;
-        align-items: center;
-        gap: 12px;
-        flex: 1 0 0;
-        align-self: stretch;
-        width: 100%;
-    }
-    .sidebar-button:hover {
-        background-color: #e8def8;
+
+    .profile:hover {
+        background-color: rgba(0, 0, 0, 0.2);
         transition: 0.5s ease;
+    }
+    .profile {
+        padding: 3px;
+        border-radius: 50%;
     }
 </style>
