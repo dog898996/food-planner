@@ -1,2 +1,4 @@
-<div>여기는 푸드스캔</div>
-<a href="/">다시 원래대로</a>
+<div>
+    그냥 huggingface가 제공하는 autotrain tensorflow.js 모델 예제 코드 복붙할
+    예정
+</div>

@@ -203,6 +203,10 @@
     .side-button:hover {
         background-color: rgba(0, 0, 0, 0.2);
     }
+    .sidebar-button:hover {
+        background-color: rgba(0, 0, 0, 0.2);
+    }
+
     .mb-title {
         font-weight: 550;
         font-size: x-large;

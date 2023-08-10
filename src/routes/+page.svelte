@@ -10,7 +10,7 @@
         <div class="TextContent">
             <div class="Headline">최근 검색 기록</div>
             <div class="SupportingText">
-                최근 3일 전까지의 검색 기록을 조회할 수 있습니다.
+                최근 7일 전까지의 검색 기록을 조회할 수 있습니다.
             </div>
         </div>
         <div class="list-container">
