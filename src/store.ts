@@ -1,5 +1,2 @@
 import { writable } from 'svelte/store';
-export const firebase = writable({
-        firebaseConfig:{
-            
-        }});
+export const firebase = writable();
