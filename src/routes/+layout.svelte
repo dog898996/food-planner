@@ -1,8 +1,87 @@
 <script lang="ts">
     import { slide } from "svelte/transition";
     import { cubicInOut } from "svelte/easing";
+    import { page } from "$app/stores";
     import "../app.postcss";
     let isSide = false;
+    import { onMount } from "svelte";
+    import type { LayoutData } from "./$types";
+    export let data: LayoutData;
+    let googlestatus = "normal"; //구글 버튼 애니메이션
+
+    import {
+        GoogleAuthProvider /*구글 로그인 하기에 관련된 모든 기능*/,
+        PhoneAuthCredential,
+        browserSessionPersistence /*내가 로그인했는지 안했는지*/,
+        getAuth,
+        onAuthStateChanged,
+        setPersistence,
+        signInWithRedirect /*팝업창으로 로그인/리디렉트 페이지로 로그인 하고 싶을 시 signInWithRedirect로 ㄱㄱ*/,
+    } from "firebase/auth";
+    import {
+        getApps,
+        initializeApp,
+        FirebaseError,
+        type FirebaseOptions,
+    } from "firebase/app";
+    import type { PageData } from "./$types";
+    import type { User } from "firebase/auth";
+    const firebaseConfig = data.firebaseConfig;
+    let curUser: User | null = null;
+    onMount(() => {
+        if (getApps().length === 0) {
+            initializeApp(firebaseConfig);
+        }
+        const auth = getAuth();
+        const un = onAuthStateChanged(auth, (user) => {
+            curUser = user;
+        });
+        return () => {
+            un();
+        };
+    });
+    const login = async (firebaseConfig: FirebaseOptions) => {
+        if (getApps().length === 0) {
+            initializeApp(firebaseConfig);
+        }
+        const provider = new GoogleAuthProvider();
+        const auth = getAuth();
+
+        provider.addScope("https://www.googleapis.com/auth/contacts.readonly");
+        try {
+            await setPersistence(auth, browserSessionPersistence);
+            const result: any = await signInWithRedirect(auth, provider);
+            const credential = GoogleAuthProvider.credentialFromResult(result);
+            const token = credential?.accessToken;
+            const user = result.user;
+            return { token, user };
+        } catch (error) {
+            if (error instanceof FirebaseError) {
+                const code = error.code;
+                const message = error.message;
+                // The email of the user's account used.
+                const email = error.customData?.email;
+                // The AuthCredential type that was used.
+                const credential =
+                    GoogleAuthProvider.credentialFromError(error);
+                console.log({
+                    code,
+                    message,
+                    email,
+                    credential,
+                });
+            } else {
+                console.log(error);
+            }
+        }
+    };
+    const logout = async (firebaseConfig: FirebaseOptions) => {
+        if (getApps().length === 0) {
+            initializeApp(firebaseConfig);
+        }
+        const auth = getAuth();
+        await auth.signOut();
+    };
 </script>
 
 <div id="container">
@@ -20,7 +99,46 @@
         </a>
     </header>
     <main>
-        <slot />
+        {#if curUser || $page.url.pathname === "/login"}
+            <slot />
+        {:else}
+            <div class="pt-[130px]">
+                <svg
+                    class="w-40 h-40 m-auto"
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 24 24"
+                    ><path d="M0 0h24v24H0V0z" fill="none" /><path
+                        d="M12 5.99L19.53 19H4.47L12 5.99M12 2L1 21h22L12 2zm1 14h-2v2h2v-2zm0-6h-2v4h2v-4z"
+                    /></svg
+                >
+
+                <div style="font-weight: bolder;" class="text-3xl text-center">
+                    로그인 되어 있지 않습니다
+                </div>
+                <div style="font-weight: bolder;" class="text-xl text-center">
+                    로그인이 필요합니다
+                </div>
+                <div style="width: 100vw; height: 20px;" />
+                <!-- svelte-ignore a11y-click-events-have-key-events -->
+
+                <!-- svelte-ignore a11y-mouse-events-have-key-events -->
+                <img
+                    class="login-button"
+                    on:mouseover={() => {
+                        googlestatus = "focus";
+                    }}
+                    on:mouseout={() => {
+                        googlestatus = "normal";
+                    }}
+                    on:click={async () => {
+                        await login(firebaseConfig);
+                    }}
+                    style="width: 200px; margin: 0 auto;"
+                    src="../google/light_{googlestatus}.png"
+                    alt=""
+                />
+            </div>
+        {/if}
         {#if isSide}
             <div
                 transition:slide={{
@@ -242,5 +360,8 @@
     .profile {
         padding: 3px;
         border-radius: 50%;
+    }
+    .login-button:hover {
+        cursor: pointer;
     }
 </style>

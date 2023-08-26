@@ -44,12 +44,16 @@
                             목표 칼로리 {wantkcal}kcal
                         </li>
                         <li class="mt-[-20px] ml-[20px]">
-                            이번 주 누적 스캔 7회
+                            최근 1주일 내 스캔 7회
                         </li>
                     </div>
                 </ul>
             </div>
         </div>
+    </div>
+    <div>
+        여기는 이제 highchart 그래프로 실시간 칼로리 소모 현황 표기할 예정
+        (백엔드)
     </div>
 </div>
 
