@@ -7,6 +7,10 @@
     import { onMount } from "svelte";
     import type { LayoutData } from "./$types";
     export let data: LayoutData;
+    import { loginimg } from "$lib/store";
+    import { loginname } from "$lib/store";
+    import { loginemail } from "$lib/store";
+    import { loginnum } from "$lib/store";
     let googlestatus = "normal"; //구글 버튼 애니메이션
 
     import {
@@ -24,7 +28,6 @@
         FirebaseError,
         type FirebaseOptions,
     } from "firebase/app";
-    import type { PageData } from "./$types";
     import type { User } from "firebase/auth";
     const firebaseConfig = data.firebaseConfig;
     let curUser: User | null = null;
@@ -35,6 +38,10 @@
         const auth = getAuth();
         const un = onAuthStateChanged(auth, (user) => {
             curUser = user;
+            $loginimg = curUser.photoURL;
+            $loginname = curUser.displayName;
+            $loginemail = curUser.email;
+            $loginnum = curUser.phoneNumber;
         });
         return () => {
             un();

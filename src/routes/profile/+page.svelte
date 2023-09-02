@@ -1,14 +1,102 @@
 <script lang="ts">
     import { onMount } from "svelte";
-    import Chart from "highcharts/es-modules/Core/Chart/Chart.js";
-    import LineSeries from "highcharts/es-modules/Series/Line/LineSeries.js";
+    import Chart from "chart.js/auto";
+    import { loginimg, loginname, loginemail, loginnum } from "$lib/store";
+    import { goto } from "$app/navigation";
+
+    const config = {
+        type: "line",
+        options: {
+            animations: {
+                tension: {
+                    duration: 1000,
+                    easing: "linear",
+                    from: 1,
+                    to: 0,
+                    loop: true,
+                },
+            },
+            scales: {
+                y: {
+                    // defining min and max so hiding the dataset does not change scale range
+                    min: 0,
+                    max: 100,
+                },
+            },
+        },
+    };
     let UserImgSrc: string;
-    onMount(() => {
-        UserImgSrc = `https://api.dicebear.com/6.x/adventurer-neutral/svg?seed=${Math.random()}`;
+    let name = "admin";
+    let wantkcal = 1000;
+    let email = "dog898996@gmail.com";
+    let phonenum = "010-0000-0000";
+    loginimg.subscribe((v) => {
+        UserImgSrc = v;
     });
-    const name = "admin";
-    const wantkcal = 1000;
-    const email = "dog898996@gmail.com";
+    loginname.subscribe((v) => {
+        name = v;
+    });
+    loginemail.subscribe((v) => {
+        email = v;
+    });
+
+    loginnum.subscribe((v) => {
+        if (Boolean(v)) {
+            phonenum = v;
+        } else {
+            phonenum = "등록되어 있지 않음";
+        }
+    });
+
+    let chartElm: HTMLCanvasElement;
+    const date = new Date();
+    onMount(() => {
+        if (!chartElm) return;
+        const ctx = chartElm.getContext("2d");
+        const data = [
+            {
+                year: `${date.getMonth() + 1} / ${date.getDate() - 6}`,
+                count: 1500,
+            },
+            {
+                year: `${date.getMonth() + 1} / ${date.getDate() - 5}`,
+                count: 2600,
+            },
+            {
+                year: `${date.getMonth() + 1} / ${date.getDate() - 4}`,
+                count: 3800,
+            },
+            {
+                year: `${date.getMonth() + 1} / ${date.getDate() - 3}`,
+                count: 900,
+            },
+            {
+                year: `${date.getMonth() + 1} / ${date.getDate() - 2}`,
+                count: 4220,
+            },
+            {
+                year: `${date.getMonth() + 1} / ${date.getDate() - 1}`,
+                count: 1610,
+            },
+            {
+                year: `${date.getMonth() + 1} / ${date.getDate() - 0}`,
+                count: 2835,
+            },
+        ];
+        new Chart(ctx, {
+            type: "bar",
+            data: {
+                labels: data.map((row) => row.year),
+                datasets: [
+                    {
+                        label: "1일 소모 칼로리량",
+                        data: data.map((row) => row.count),
+                    },
+                ],
+            },
+            options: {},
+        });
+    });
 </script>
 
 <div class="profile-container">
@@ -44,6 +132,9 @@
                             목표 칼로리 {wantkcal}kcal
                         </li>
                         <li class="mt-[-20px] ml-[20px]">
+                            전화번호 {phonenum}
+                        </li>
+                        <li class="mt-[-20px] ml-[20px]">
                             최근 1주일 내 스캔 7회
                         </li>
                     </div>
@@ -51,13 +142,33 @@
             </div>
         </div>
     </div>
-    <div>
-        여기는 이제 highchart 그래프로 실시간 칼로리 소모 현황 표기할 예정
-        (백엔드)
+    <div class="pb-5">
+        <canvas
+            bind:this={chartElm}
+            style="background-color: white; border-radius: 10px;"
+            height="220"
+        >
+            <!-- 여기는 이제 highchart 그래프로 실시간 칼로리 소모 현황 표기할 예정
+        (백엔드) -->
+        </canvas>
+    </div>
+
+    <!-- svelte-ignore a11y-click-events-have-key-events -->
+    <div
+        class="logoutbtn"
+        style="line-height: 33px; height: 40px; width: 500px; border: 3px white solid; border-radius: 15px; background-color: rgb(255, 82, 52); font-size: 17px; font-weight: bolder; color: white; text-align: center;  position: relative;"
+        on:click={() => {
+            goto("/logout");
+        }}
+    >
+        로그아웃
     </div>
 </div>
 
 <style>
+    .logoutbtn:hover {
+        cursor: pointer;
+    }
     .chartbox {
         height: 320px;
         background: #ece6f0;
