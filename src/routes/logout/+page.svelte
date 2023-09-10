@@ -18,9 +18,11 @@
     import type { PageData } from "./$types";
     export let data: PageData;
     import { goto } from "$app/navigation";
+    import { loading } from "$lib/store";
     let firebaseConfig = data.firebaseConfig;
     onMount(() => {
         const logout = async (firebaseConfig: FirebaseOptions) => {
+            $loading = true;
             if (getApps().length === 0) {
                 initializeApp(firebaseConfig);
             }
@@ -28,6 +30,7 @@
             await auth.signOut();
         };
         logout(firebaseConfig).then(() => {
+            $loading = false;
             goto("/");
         });
     });

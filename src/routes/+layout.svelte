@@ -11,6 +11,9 @@
     import { loginname } from "$lib/store";
     import { loginemail } from "$lib/store";
     import { loginnum } from "$lib/store";
+    import { Circle } from "svelte-loading-spinners";
+    import { loading } from "$lib/store";
+    let loginloading = false;
     let googlestatus = "normal"; //구글 버튼 애니메이션
 
     import {
@@ -29,6 +32,7 @@
         type FirebaseOptions,
     } from "firebase/app";
     import type { User } from "firebase/auth";
+    import { goto } from "$app/navigation";
     const firebaseConfig = data.firebaseConfig;
     let curUser: User | null = null;
     onMount(() => {
@@ -38,6 +42,8 @@
         const auth = getAuth();
         const un = onAuthStateChanged(auth, (user) => {
             curUser = user;
+            $loading = false;
+            if (!curUser) return;
             $loginimg = curUser.photoURL;
             $loginname = curUser.displayName;
             $loginemail = curUser.email;
@@ -48,12 +54,13 @@
         };
     });
     const login = async (firebaseConfig: FirebaseOptions) => {
+        $loading = true;
+
         if (getApps().length === 0) {
             initializeApp(firebaseConfig);
         }
         const provider = new GoogleAuthProvider();
         const auth = getAuth();
-
         provider.addScope("https://www.googleapis.com/auth/contacts.readonly");
         try {
             await setPersistence(auth, browserSessionPersistence);
@@ -61,6 +68,7 @@
             const credential = GoogleAuthProvider.credentialFromResult(result);
             const token = credential?.accessToken;
             const user = result.user;
+
             return { token, user };
         } catch (error) {
             if (error instanceof FirebaseError) {
@@ -77,8 +85,10 @@
                     email,
                     credential,
                 });
+                $loading = false;
             } else {
                 console.log(error);
+                $loading = false;
             }
         }
     };
@@ -91,6 +101,29 @@
     };
 </script>
 
+{#if $loading}
+    <!-- 새로운 로딩 컴포넌트 -->
+    <div class="overlay">
+        <div
+            style="display: flex; flex-direction: column; justify-content: center; align-items: center;"
+        >
+            <Circle size="60" color="#FF3E00" unit="px" duration="1s" />
+            <div
+                style="padding: 10px 10px 10px 20px; color: white; -webkit-text-stroke: 1px white; font-size: 20px;"
+            >
+                로딩중..
+            </div>
+        </div>
+    </div>
+    <!-- (구) 로딩 컴포넌트 -->
+    <!-- <div
+        class="loading"
+        style="position: fixed;   left: 50%; top: 50%;
+    transform: translate(-50%, -50%); z-index: 9000;"
+    >
+        <Circle size="60" color="#FF3E00" unit="px" duration="1s" />
+    </div> -->
+{/if}
 <div id="container">
     <header>
         <button class="side-button" on:click={() => (isSide = !isSide)} />
@@ -139,6 +172,7 @@
                     }}
                     on:click={async () => {
                         await login(firebaseConfig);
+                        goto("/");
                     }}
                     style="width: 200px; margin: 0 auto;"
                     src="../google/light_{googlestatus}.png"
@@ -303,6 +337,21 @@
 </div>
 
 <style lang="postcss">
+    .overlay {
+        position: fixed;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        z-index: 10001;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #b3b2b2;
+        font-family: "Arial", sans-serif;
+        font-size: 1.375rem;
+        opacity: 70%;
+    }
     #container {
         width: 100%;
         max-width: 500px;

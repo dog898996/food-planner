@@ -3,6 +3,8 @@
     import Chart from "chart.js/auto";
     import { loginimg, loginname, loginemail, loginnum } from "$lib/store";
     import { goto } from "$app/navigation";
+    import Modal from "$lib/svelte/Modal.svelte";
+    let showModal = false;
 
     const config = {
         type: "line",
@@ -83,6 +85,7 @@
                 count: 2835,
             },
         ];
+
         new Chart(ctx, {
             type: "bar",
             data: {
@@ -94,6 +97,7 @@
                     },
                 ],
             },
+
             options: {},
         });
     });
@@ -113,9 +117,11 @@
                     class="mb-[13px] ml-[-100px] text-[#614A70] text-center leading-[43px] w-60 h-12 relative bg-white rounded-3xl text-2xl font-black"
                 >
                     {name}님
+                    <!-- svelte-ignore a11y-click-events-have-key-events -->
                     <div
-                        class="text-[black] linear2 text-sm w-32 ml-[180px] mt-[-31px]"
+                        class="text-[black] hover:cursor-pointer linear2 text-sm w-32 ml-[180px] mt-[-31px]"
                         style=" border-radius: 5px; border: 3px white solid;"
+                        on:click={() => (showModal = true)}
                     >
                         목표 칼로리 변경
                     </div>
@@ -164,17 +170,24 @@
         로그아웃
     </div>
 </div>
+<Modal bind:showModal>
+    <h2 slot="header">
+        <span style="font-size: larger; font-weight: bolder; color: #6750A4;"
+            >칼로리 설정</span
+        >
+        <small class="text-[#6750A4]"
+            >&nbsp; 원하는 목표치 칼로리를 설정해 주세요
+        </small>
+    </h2>
+
+    sdfd
+</Modal>
 
 <style>
     .logoutbtn:hover {
         cursor: pointer;
     }
-    .chartbox {
-        height: 320px;
-        background: #ece6f0;
-        box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
-        border-radius: 28px;
-    }
+
     .linear {
         background: linear-gradient(
             #f2f7c6 0 4%,
