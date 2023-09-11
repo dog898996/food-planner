@@ -33,6 +33,37 @@
     } from "firebase/app";
     import type { User } from "firebase/auth";
     import { goto } from "$app/navigation";
+
+    // 몽고디비 코드 시작s
+    import { MongoClient } from "mongodb";
+
+    // Connection URL
+    const url =
+        "mongodb+srv://be2hyu:%40qq26784705@cluster1.br0fnjf.mongodb.net/";
+    const client = new MongoClient(url);
+
+    // Database Name
+    const dbName = "food-planner";
+
+    async function main() {
+        // Use connect method to connect to the server
+        await client.connect();
+        console.log("Connected successfully to server");
+        const db = client.db(dbName);
+        const collection = db.collection("user");
+        for await (let i of collection.find({})) {
+            console.log(i);
+        }
+        // the following code examples can be pasted here...
+        return "done.";
+    }
+
+    main()
+        .then(console.log)
+        .catch(console.error)
+        .finally(() => client.close());
+
+    // 몽고디비 코드 끝
     const firebaseConfig = data.firebaseConfig;
     let curUser: User | null = null;
     onMount(() => {

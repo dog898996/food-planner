@@ -36,6 +36,7 @@
     "firebase": "^10.1.0",
     "marked": "^5.1.2",
     "marked-mangle": "^1.1.0",
+    "mongodb": "^6.0.0",
     "svelte-loading-spinners": "^0.3.4"
   }
 }
