@@ -7,6 +7,7 @@
     import { onMount } from "svelte";
     import type { LayoutData } from "./$types";
     export let data: LayoutData;
+    import { dbinfo } from "$lib/store";
     import { loginimg } from "$lib/store";
     import { loginname } from "$lib/store";
     import { loginemail } from "$lib/store";
@@ -34,36 +35,6 @@
     import type { User } from "firebase/auth";
     import { goto } from "$app/navigation";
 
-    // 몽고디비 코드 시작s
-    import { MongoClient } from "mongodb";
-
-    // Connection URL
-    const url =
-        "mongodb+srv://be2hyu:%40qq26784705@cluster1.br0fnjf.mongodb.net/";
-    const client = new MongoClient(url);
-
-    // Database Name
-    const dbName = "food-planner";
-
-    async function main() {
-        // Use connect method to connect to the server
-        await client.connect();
-        console.log("Connected successfully to server");
-        const db = client.db(dbName);
-        const collection = db.collection("user");
-        for await (let i of collection.find({})) {
-            console.log(i);
-        }
-        // the following code examples can be pasted here...
-        return "done.";
-    }
-
-    main()
-        .then(console.log)
-        .catch(console.error)
-        .finally(() => client.close());
-
-    // 몽고디비 코드 끝
     const firebaseConfig = data.firebaseConfig;
     let curUser: User | null = null;
     onMount(() => {
@@ -71,7 +42,7 @@
             initializeApp(firebaseConfig);
         }
         const auth = getAuth();
-        const un = onAuthStateChanged(auth, (user) => {
+        const un = onAuthStateChanged(auth, async (user) => {
             curUser = user;
             $loading = false;
             if (!curUser) return;
@@ -79,6 +50,19 @@
             $loginname = curUser.displayName;
             $loginemail = curUser.email;
             $loginnum = curUser.phoneNumber;
+            let db = await fetch(`/dbserver?email=${$loginemail}`, {
+                method: "GET",
+            });
+            $dbinfo = await db.json();
+            // 아래 코드는 store에 저장된 db의 변경을 실제 mongodb로 반영시켜주는 fetch 코드( 곧 삭제할 예정)
+            await fetch(
+                `/dbserver?email=${$loginemail}&db=${encodeURIComponent(
+                    JSON.stringify($dbinfo)
+                )}`,
+                {
+                    method: "PUT",
+                }
+            );
         });
         return () => {
             un();

@@ -1,7 +1,13 @@
 <script lang="ts">
     import { onMount } from "svelte";
     import Chart from "chart.js/auto";
-    import { loginimg, loginname, loginemail, loginnum } from "$lib/store";
+    import {
+        dbinfo,
+        loginimg,
+        loginname,
+        loginemail,
+        loginnum,
+    } from "$lib/store";
     import { goto } from "$app/navigation";
     import Modal from "$lib/svelte/Modal.svelte";
     let showModal = false;
@@ -28,10 +34,10 @@
         },
     };
     let UserImgSrc: string;
-    let name = "admin";
-    let wantkcal = 1000;
-    let email = "dog898996@gmail.com";
-    let phonenum = "010-0000-0000";
+    let name = $loginname;
+    let wantkcal = $dbinfo.FoodGoal;
+    let email = $loginemail;
+    let phonenum = $loginnum;
     loginimg.subscribe((v) => {
         UserImgSrc = v;
     });
