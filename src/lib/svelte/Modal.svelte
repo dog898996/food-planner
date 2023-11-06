@@ -23,7 +23,7 @@
         <button
             class="text-[white] text-sm font-extrabold bg-[#78b5f7] rounded-md p-[2.5px] border-solid border-[3px] border-[white]"
             autofocus
-            on:click={() => dialog.close()}>저장</button
+            on:click={() => dialog.close()}>닫기</button
         >
     </div>
 </dialog>

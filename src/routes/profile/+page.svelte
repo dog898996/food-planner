@@ -64,31 +64,31 @@
         const data = [
             {
                 year: `${date.getMonth() + 1} / ${date.getDate() - 6}`,
-                count: 1500,
+                count: 0,
             },
             {
                 year: `${date.getMonth() + 1} / ${date.getDate() - 5}`,
-                count: 2600,
+                count: 0,
             },
             {
                 year: `${date.getMonth() + 1} / ${date.getDate() - 4}`,
-                count: 3800,
+                count: 0,
             },
             {
                 year: `${date.getMonth() + 1} / ${date.getDate() - 3}`,
-                count: 900,
+                count: 0,
             },
             {
                 year: `${date.getMonth() + 1} / ${date.getDate() - 2}`,
-                count: 4220,
+                count: 0,
             },
             {
                 year: `${date.getMonth() + 1} / ${date.getDate() - 1}`,
-                count: 1610,
+                count: 0,
             },
             {
                 year: `${date.getMonth() + 1} / ${date.getDate() - 0}`,
-                count: 2835,
+                count: 1554,
             },
         ];
 
@@ -107,6 +107,8 @@
             options: {},
         });
     });
+    let fitinfo = [20, "male", 180, 70, "level_1"];
+    let fitfit = "maintain weight";
 </script>
 
 <div class="profile-container">
@@ -185,8 +187,100 @@
             >&nbsp; 원하는 목표치 칼로리를 설정해 주세요
         </small>
     </h2>
+    <label for="weight">나이 :</label>
+    <input
+        type="number"
+        id="weight"
+        style="border: 2px solid black;"
+        bind:value={fitinfo[0]}
+    />
+    <br />
+    <label for="sex">성별 :</label>
+    <select
+        name="sex"
+        style="border: 2px solid black;"
+        id="sex"
+        bind:value={fitinfo[1]}
+    >
+        <option value="male">남자</option>
+        <option value="female">여자</option>
+    </select>
+    <label for="height">키 :</label>
+    <input
+        type="number"
+        style="border: 2px solid black;"
+        id="height"
+        bind:value={fitinfo[2]}
+    /> <br />
 
-    sdfd
+    <label for="weight">체중 :</label>
+    <input
+        type="number"
+        style="border: 2px solid black;"
+        id="weight"
+        bind:value={fitinfo[3]}
+    /> <br />
+
+    <label for="lang">운동량</label>
+    <select
+        name="exercise"
+        style="border: 2px solid black;"
+        id="lang"
+        bind:value={fitinfo[4]}
+    >
+        <option value="level_1">조금</option>
+        <option value="level_2">보통</option>
+        <option value="level_3">많이</option>
+    </select> <br />
+    <label for="goal">목표</label>
+
+    <select
+        name="goal"
+        style="border: 2px solid black;"
+        id="goal"
+        bind:value={fitfit}
+    >
+        <option value="maintain weight">체중 유지</option>
+        <option value="Mild weight loss">아주 조금 체중 줄이기</option>
+        <option value="Weight loss">체중 줄이기</option>
+        <option value="Extreme weight loss">극도로 체중 줄이기</option>
+        <option value="Mild weight gain">아주 조금 체중 늘리기</option>
+        <option value="Weight gain">체중 늘리기</option>
+        <option value="Extreme weight gain">극도로 체중 늘리기</option>
+    </select>
+    <br />
+    <button
+        class="text-[white] text-sm font-extrabold bg-[#f78178] rounded-md p-[2.5px] border-solid border-[3px] border-[white]"
+        autofocus
+        on:click={async () => {
+            const url = `https://fitness-calculator.p.rapidapi.com/dailycalorie?age=${fitinfo[0]}&gender=${fitinfo[1]}&height=${fitinfo[2]}&weight=${fitinfo[3]}&activitylevel=${fitinfo[4]}`;
+            console.log(url);
+            const options = {
+                method: "GET",
+                headers: {
+                    "X-RapidAPI-Key":
+                        "51bb7b2215msh62d05ededbe1510p1aac3bjsn4fcefdb9501b",
+                    "X-RapidAPI-Host": "fitness-calculator.p.rapidapi.com",
+                },
+            };
+
+            try {
+                const response = await fetch(url, options);
+                const result = await response.json();
+                console.log(result);
+                let FoodGoaltest;
+                if ((fitfit = "maintain weight")) {
+                    FoodGoaltest = result.data.goals["maintain weight"];
+                } else {
+                    FoodGoaltest = result.data.goals[fitfit].calory;
+                }
+                $dbinfo.FoodGoal = FoodGoaltest;
+                goto("/");
+            } catch (error) {
+                console.error(error);
+            }
+        }}>칼로리 값 계산 후 저장하기</button
+    >
 </Modal>
 
 <style>

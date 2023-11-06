@@ -11,17 +11,13 @@ export const loading = writable(true);
 
 export const dbinfo = writable({
     UserEmail: "xxx@gmail.com",
-    Alarm: {
-        Less: "True",
-        Over: "True"
-    },
+
     FoodGoal: "1800",
     FoodScanDetail: [
         {
-            Date: "20230000",
+            Date: new Date(),
             FoodName: "음식",
-            FoodKcal: "칼로리(숫자)",
-            FoodSum: "인분(숫자)"
+            FoodKcal: 0,
         },
     ]
 })

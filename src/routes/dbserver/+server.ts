@@ -19,10 +19,6 @@ export const GET: RequestHandler = async ({ url }) => {
         if (!value) {
             await collection.insertOne({
                 UserEmail: `${email}`,
-                Alarm: {
-                    Less: true,
-                    Over: true,
-                },
                 FoodGoal: 1800,
                 FoodScanDetail: [],
             });

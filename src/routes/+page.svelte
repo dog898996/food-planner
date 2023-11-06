@@ -1,8 +1,11 @@
 <script lang="ts">
     import SearchBlock from "$lib/svelte/SearchBlock.svelte";
     import RecipeBlock from "$lib/svelte/RecipeBlock.svelte";
+    import { dbinfo } from "$lib/store";
+    import Modal from "$lib/svelte/Modal.svelte";
     import "../app.postcss";
     let inputvalue: String;
+    let showModal = false;
 </script>
 
 <main class="flex justify-around align-middle flex-col pt-4">
@@ -14,36 +17,14 @@
             </div>
         </div>
         <div class="list-container">
-            <SearchBlock
-                foodname={"해장국"}
-                foodkcal={780}
-                imgroute="/favicon.png"
-                date="2023/07/29"
-            />
-            <SearchBlock
-                foodname={"라면"}
-                foodkcal={75}
-                imgroute="/favicon.png"
-                date="2023/07/29"
-            />
-            <SearchBlock
-                foodname={"파워에이드"}
-                foodkcal={75}
-                imgroute="/favicon.png"
-                date="2023/07/29"
-            />
-            <SearchBlock
-                foodname={"소고기무국"}
-                foodkcal={75}
-                imgroute="/favicon.png"
-                date="2023/07/29"
-            />
-            <SearchBlock
-                foodname={"소고기튀김"}
-                foodkcal={250}
-                imgroute="/favicon.png"
-                date="2023/07/29"
-            />
+            {#each $dbinfo.FoodScanDetail as v, i}
+                <SearchBlock
+                    foodname={v.FoodName.replaceAll("_", " ")}
+                    foodkcal={v.FoodKcal}
+                    imgroute="/favicon.png"
+                    date={String(v.Date.toLocaleString())}
+                />
+            {/each}
         </div>
         <div
             class="text-right text-[12px] mr-3 p-2 text-[#6750A4] font-semibold"
@@ -105,43 +86,76 @@
         <div class=" recipe-container m-2">
             <RecipeBlock
                 listname={"통뼈해장국"}
-                foodkcal={780}
+                foodkcal={480}
                 imgroute="/favicon.png"
                 info="가족이 다 같이 먹기 좋은 요리"
             />
+            <div
+                on:click={() => {
+                    showModal = true;
+                }}
+            >
+                <RecipeBlock
+                    listname={"감자전"}
+                    foodkcal={170}
+                    imgroute="/favicon.png"
+                    info="믹서기로 간편하게 만드는 요리"
+                />
+            </div>
+
             <RecipeBlock
-                listname={"회ㅚㅚ오리 감자"}
-                foodkcal={7800}
-                imgroute="/favicon.png"
-                info="맛잇음"
-            />
-            <RecipeBlock
-                listname={"제육볶음 치즈덮밥"}
-                foodkcal={2}
+                listname={"치즈제육덮밥"}
+                foodkcal={350}
                 imgroute="/favicon.png"
                 info="간단하게 만들 수 있는 요리"
             />
             <RecipeBlock
-                listname={"팬케이크 파스타"}
-                foodkcal={780}
+                listname={"우유 파스타"}
+                foodkcal={205}
                 imgroute="/favicon.png"
                 info="달달하고 부드러운 맛"
             />
             <RecipeBlock
-                listname={"해장국튀김"}
-                foodkcal={780}
+                listname={"치킨 텐더"}
+                foodkcal={174}
                 imgroute="/favicon.png"
                 info="건강에 좋은 요리"
-            />
-            <RecipeBlock
-                listname={"교촌 치킨"}
-                foodkcal={780}
-                imgroute="/favicon.png"
-                info="존맛"
             />
         </div>
     </div>
 </main>
+<Modal bind:showModal>
+    <h2 slot="header">
+        <span style="font-size: larger; font-weight: bolder; color: #6750A4;"
+            >간단 레시피 정보</span
+        >
+        <small class="text-[#6750A4]"
+            >&nbsp; 선택하신 음식의 레시피 정보입니다.
+        </small>
+    </h2>
+
+    <div style=" font-weight: bolder; color: gray;">
+        1. 감자는 껍질을 벗겨 강판에 갈아준다. 이때 생기는 감자즙은 버리고,
+        슬라이스 양파를 넣어 섞어준다. 감자즙을 버리고 만들어야 밀가루나
+        부침가루 양을 적게할 수 있고, 본연의 100%감자맛을 느낄수 있다.
+    </div>
+    <div style=" font-weight: bolder; color: gray;">
+        2. 청량고추 1-2개 분량을 썰어서 넣고 부침가루를 1-2큰술정도와
+        소금,후추로 간을한후 섞어준다.
+    </div>
+    <div style=" font-weight: bolder; color: gray;">
+        3. 중약불로 팬을 달구고 기름을 2-3큰술 두른팬에 손바닥만한 사이즈로
+        부친다.
+    </div>
+    <div style=" font-weight: bolder; color: gray;">
+        4. 어느정도 한쪽면이 바삭하게 구워질때까지 중약불로 해놓고 기다린다.
+        후라이팬에 모양잡은후 약불로 하고 30-40초 정도 놔두었다가 확인하며
+        뒤집어보면좋다. 그래야 바닥에 붙지않고 맛있게 부쳐진다
+    </div>
+    <div style=" font-weight: bolder; color: gray;">
+        5. 앞뒤로 한번씩 더 뒤집어 꺼내면 바삭하고 고소한 감자전 완성~!
+    </div>
+</Modal>
 
 <style lang="postcss">
     .SupportingText {
